@@ -23,16 +23,19 @@ func Unpack(input string) (string, error) {
 	var resString strings.Builder
 
 	for _, val := range input {
-		if n, err := strconv.Atoi(string(val)); err == nil {
+		n, err := strconv.Atoi(string(val))
+
+		if err == nil {
 			if len(prevStack) == 0 {
 				return "", ErrInvalidString
 			}
 
-			if n == 0 {
+			switch {
+			case n == 0:
 				decoded = decoded[:len(decoded)-1]
-			} else if len(decoded) > 1 && decoded[len(decoded)-2] == "\\" {
+			case len(decoded) > 1 && decoded[len(decoded)-2] == "\\":
 				decoded = decoded[:len(decoded)-2]
-			} else {
+			default:
 				decoded = decoded[:len(decoded)-1]
 			}
 
