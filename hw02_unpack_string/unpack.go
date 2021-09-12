@@ -19,36 +19,37 @@ func join(strs []string) string {
 
 func Unpack(input string) (string, error) {
 	var prevStack []string
+	var decoded []string
 	var resString strings.Builder
 
 	for _, val := range input {
-		decoded := string(val)
-		n, err := strconv.Atoi(string(val))
-
-		if err == nil {
+		if n, err := strconv.Atoi(string(val)); err == nil {
 			if len(prevStack) == 0 {
 				return "", ErrInvalidString
 			}
 
-			repeatCount := n - 1
-			if repeatCount < 0 {
-				repeatCount = 0
+			if n == 0 {
+				decoded = decoded[:len(decoded)-1]
+			} else if len(decoded) > 1 && decoded[len(decoded)-2] == "\\" {
+				decoded = decoded[:len(decoded)-2]
+			} else {
+				decoded = decoded[:len(decoded)-1]
 			}
 
-			decoded = strings.Repeat(join(prevStack), repeatCount)
+			decoded = append(decoded, strings.Repeat(join(prevStack), n))
 
 			prevStack = nil
 		} else {
 			if len(prevStack) > 0 && prevStack[len(prevStack)-1] != "\\" {
 				prevStack = nil
 			}
-			prevStack = append(prevStack, string(val))
-		}
 
-		if decoded != "" {
-			resString.WriteString(decoded)
+			prevStack = append(prevStack, string(val))
+			decoded = append(decoded, string(val))
 		}
 	}
+
+	resString.WriteString(join(decoded))
 
 	return resString.String(), nil
 }
