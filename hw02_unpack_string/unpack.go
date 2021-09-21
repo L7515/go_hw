@@ -2,20 +2,11 @@ package main
 
 import (
 	"errors"
-	"strconv"
 	"strings"
+	"unicode"
 )
 
 var ErrInvalidString = errors.New("invalid string")
-
-func join(strs []string) string {
-	var sb strings.Builder
-
-	for _, str := range strs {
-		sb.WriteString(str)
-	}
-	return sb.String()
-}
 
 func Unpack(input string) (string, error) {
 	var prevStack []string
@@ -23,9 +14,10 @@ func Unpack(input string) (string, error) {
 	var resString strings.Builder
 
 	for _, val := range input {
-		n, err := strconv.Atoi(string(val))
+		if unicode.IsDigit(val) {
+			// also, we could use n, err := strconv.Atoi(string(val)) instead
+			n := int(val - '0')
 
-		if err == nil {
 			if len(prevStack) == 0 {
 				return "", ErrInvalidString
 			}
@@ -39,8 +31,7 @@ func Unpack(input string) (string, error) {
 				decoded = decoded[:len(decoded)-1]
 			}
 
-			decoded = append(decoded, strings.Repeat(join(prevStack), n))
-
+			decoded = append(decoded, strings.Repeat(strings.Join(prevStack, ""), n))
 			prevStack = nil
 		} else {
 			if len(prevStack) > 0 && prevStack[len(prevStack)-1] != "\\" {
@@ -51,8 +42,6 @@ func Unpack(input string) (string, error) {
 			decoded = append(decoded, string(val))
 		}
 	}
-
-	resString.WriteString(join(decoded))
-
+	resString.WriteString(strings.Join(decoded, ""))
 	return resString.String(), nil
 }
