@@ -1,4 +1,4 @@
-package main
+package hw03frequencyanalysis
 
 import (
 	"regexp"
@@ -23,7 +23,7 @@ func (wc WordCounts) Less(i, j int) bool {
 	return wc[i].Count > wc[j].Count
 }
 
-func structSort(wordToCountMap map[string]int) *WordCounts {
+func structSort(wordToCountMap map[string]int) WordCounts {
 	wordCounts := make(WordCounts, 0, len(wordToCountMap))
 	for k, v := range wordToCountMap {
 		wordCounts = append(wordCounts, WordCount{k, v})
@@ -31,15 +31,15 @@ func structSort(wordToCountMap map[string]int) *WordCounts {
 
 	sort.Sort(wordCounts)
 
-	return &wordCounts
+	return wordCounts
 }
 
-func prepareWords(str string) *[]string {
+func prepareWords(str string) []string {
 	regExpoSplitter := regexp.MustCompile(`[^\s,;\n\t]+`)
 
 	words := regExpoSplitter.FindAllString(str, -1)
 
-	return &words
+	return words
 }
 
 func Top10(str string) []string {
@@ -52,11 +52,11 @@ func Top10(str string) []string {
 	words := prepareWords(str)
 	wordsToCountMap := make(map[string]int)
 
-	for _, val := range *words {
+	for _, val := range words {
 		wordsToCountMap[val]++
 	}
 
-	sortedWords := *structSort(wordsToCountMap)
+	sortedWords := structSort(wordsToCountMap)
 
 	for i := 0; i < 10; i++ {
 		top10 = append(top10, sortedWords[i].Word)
