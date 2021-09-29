@@ -43,6 +43,15 @@ var text = `Как видите, он  спускается  по  лестни�
 	посидеть у огня и послушать какую-нибудь интересную сказку.
 		В этот вечер...`
 
+var loremText = `Lorem Ipsum is simply dummy text of the printing and typesetting 
+			industry. Lorem Ipsum has been the industry's standard dummy text ever since 
+			the 1500s, when an unknown printer took a galley of type and scrambled it to 
+			make a type specimen book. It has survived not only five centuries, but 
+			also the leap into electronic typesetting, remaining essentially unchanged. 
+			It was popularised in the 1960s with the release of Letraset sheets 
+			containing Lorem Ipsum passages, and more recently with desktop publishing 
+			software like Aldus PageMaker including versions of Lorem Ipsum.`
+
 func TestTop10(t *testing.T) {
 	t.Run("no words in empty string", func(t *testing.T) {
 		require.Len(t, Top10(""), 0)
@@ -78,5 +87,21 @@ func TestTop10(t *testing.T) {
 			}
 			require.Equal(t, expected, Top10(text))
 		}
+	})
+
+	t.Run("lorem ipsum test", func(t *testing.T) {
+		expected := []string{
+			"the",
+			"Lorem",
+			"of",
+			"Ipsum",
+			"and",
+			"It",
+			"a",
+			"dummy",
+			"has",
+			"text",
+		}
+		require.Equal(t, expected, Top10(loremText))
 	})
 }
